@@ -12,7 +12,7 @@ window._awsConfig = {
   // Hosted UI 設定
   oauth: {
     domain: "ap-northeast-1bhjsyriee.auth.ap-northeast-1.amazoncognito.com", // e.g. my-app.auth.ap-northeast-1.amazoncognito.com
-    scope: ["openid", "email"],
+    scope: ["openid", "email", "phone"],
     redirectSignIn: "http://localhost:3000/",
     redirectSignOut: "http://localhost:3000/",
     responseType: "code",
