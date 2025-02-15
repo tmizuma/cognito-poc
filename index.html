@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <title>Amplify PoC with CDN (4.3.25)</title>
-  </head>
+</head>
 
-  <body>
+<body>
     <h1>Pure HTML + AWS Amplify (CDN) + Cognito PoC</h1>
 
     <!-- ===== SignUp (Email/Password) ===== -->
     <section style="border:1px solid #ccc; margin-bottom:10px; padding:10px;">
-      <h2>Sign Up</h2>
-      <div>
-        <label>Email: <input id="signupEmail" type="email"/></label><br />
-        <label>Password: <input id="signupPassword" type="password"/></label
+        <h2>Sign Up</h2>
+        <div>
+            <label>Email: <input id="signupEmail" type="email"/></label><br />
+            <label>Password: <input id="signupPassword" type="password"/></label
         ><br />
         <label
           >Phone(+81... optional if not mandatory):
@@ -28,62 +29,64 @@
       <h2>Confirm Email</h2>
       <div>
         <label>Email: <input id="confirmEmail" type="text"/></label><br />
-        <label>Code: <input id="confirmCode" type="text"/></label><br />
-        <button id="btnConfirmEmail">Confirm Email</button>
-        <button id="btnResendEmailCode">Resend Email Code</button>
-      </div>
+            <label>Code: <input id="confirmCode" type="text"/></label><br />
+            <button id="btnConfirmEmail">Confirm Email</button>
+            <button id="btnResendEmailCode">Resend Email Code</button>
+        </div>
     </section>
 
     <!-- ===== SignIn + SMS MFA ===== -->
     <section style="border:1px solid #ccc; margin-bottom:10px; padding:10px;">
-      <h2>Sign In (Email/Password) + SMS MFA</h2>
-      <div>
-        <label>Email: <input id="signinEmail" type="text"/></label><br />
-        <label>Password: <input id="signinPassword" type="password"/></label
+        <h2>Sign In (Email/Password) + SMS MFA</h2>
+        <div>
+            <label>Email: <input id="signinEmail" type="text"/></label><br />
+            <label>Password: <input id="signinPassword" type="password"/></label
         ><br />
         <button id="btnSignIn">Sign In</button>
       </div>
       <div style="margin-top:10px;">
         <label>MFA Code: <input id="mfaCode" type="text"/></label>
-        <button id="btnConfirmMfa">Confirm MFA</button>
-      </div>
+            <button id="btnConfirmMfa">Confirm MFA</button>
+        </div>
     </section>
 
     <!-- ===== Facebook Login ===== -->
     <section style="border:1px solid #ccc; margin-bottom:10px; padding:10px;">
-      <h2>Facebook Login (Hosted UI)</h2>
-      <button id="btnFacebookLogin">Login with Facebook</button>
+        <h2>Facebook Login (Hosted UI)</h2>
+        <button id="btnFacebookLogin">Login with Facebook</button>
     </section>
 
     <!-- ===== Update/Verify Phone ===== -->
     <section style="border:1px solid #ccc; margin-bottom:10px; padding:10px;">
-      <h2>Attach/Update Phone + Verify (SMS)</h2>
-      <div>
-        <label>Phone(+81...): <input id="phoneNumber" type="text"/></label
+        <h2>Attach/Update Phone + Verify (SMS)</h2>
+        <div>
+            <label>Phone(+81...): <input id="phoneNumber" type="text"/></label
         ><br />
         <button id="btnUpdatePhone">Update Phone & Send Code</button>
       </div>
       <div style="margin-top:10px;">
         <label>SMS Code: <input id="phoneCode" type="text"/></label>
-        <button id="btnVerifyPhone">Verify Phone</button>
-        <button id="btnResendPhoneCode">Resend Phone Code</button>
-      </div>
+            <button id="btnVerifyPhone">Verify Phone</button>
+            <button id="btnResendPhoneCode">Resend Phone Code</button>
+        </div>
     </section>
 
     <!-- ===== Current User & SignOut ===== -->
     <section style="border:1px solid #ccc; padding:10px;">
-      <h2>Check Current User / Sign Out</h2>
-      <button id="btnCheckUser">Check Current User</button>
-      <button id="btnSignOut">Sign Out</button>
+        <h2>Check Current User / Sign Out</h2>
+        <button id="btnCheckUser">Check Current User</button>
+        <button id="btnSignOut">Sign Out</button>
+    </section>
+
+    <section style="border:1px solid #ccc; margin-bottom:10px; padding:10px;">
+        <h2>Cognito Hosted UI</h2>
+        <button id="btnCognitoHostedUI">Open Cognito Hosted UI</button>
     </section>
 
     <!-- ===== Logs ===== -->
     <section style="border:1px solid #ccc; margin-top:10px; padding:10px;">
-      <h2>Logs</h2>
-      <pre
-        id="logs"
-        style="height:250px; background:#f9f9f9; overflow:auto;"
-      ></pre>
+        <h2>Logs</h2>
+        <pre id="logs" style="height:250px; background:#f9f9f9; overflow:auto;"></pre>
     </section>
 
     <!-- 1) Amplify(UMD) from unpkg CDN. v4.3.25 -->
@@ -94,5 +97,6 @@
 
     <!-- 3) Main logic (script.js) -->
     <script src="script.js"></script>
-  </body>
+</body>
+
 </html>

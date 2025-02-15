@@ -4,8 +4,8 @@
 window._awsConfig = {
   aws_project_region: "ap-northeast-1",
   aws_cognito_region: "ap-northeast-1",
-  aws_user_pools_id: "ap-northeast-1_BHjsyRieE", // e.g. ap-northeast-1_AbCdEfG
-  aws_user_pools_web_client_id: "fc9e9n9ee6udlvk3io4dj7uig",
+  aws_user_pools_id: "ap-northeast-1_EF6ld8rXo",
+  aws_user_pools_web_client_id: "240at1f77kjp80qfhdkssusdqb",
   // aws_cognito_identity_pool_id: "<YOUR_IDENTITY_POOL_ID>", // Facebook連携に必要(Identity Pool)
   aws_mandatory_sign_in: "false",
 

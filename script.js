@@ -34,6 +34,9 @@ const btnConfirmMfa = document.getElementById("btnConfirmMfa");
 
 const btnFacebookLogin = document.getElementById("btnFacebookLogin");
 
+// ★ 追加: Hosted UI ボタン
+const btnCognitoHostedUI = document.getElementById("btnCognitoHostedUI");
+
 const phoneNumber = document.getElementById("phoneNumber");
 const phoneCode = document.getElementById("phoneCode");
 const btnUpdatePhone = document.getElementById("btnUpdatePhone");
@@ -54,7 +57,6 @@ btnSignUp.addEventListener("click", async () => {
 
   try {
     const attributes = { email: email };
-    // 必須の場合のみ phone_number を追加
     if (phone) {
       attributes.phone_number = phone;
     }
@@ -84,7 +86,8 @@ btnConfirmEmail.addEventListener("click", async () => {
 btnResendEmail.addEventListener("click", async () => {
   const email = confirmEmail.value.trim();
   try {
-    await Auth.resendSignUp(email);
+    const result = await Auth.resendSignUp(email);
+    console.log(result);
     log("Resend email code success");
   } catch (err) {
     log("Resend email code error: " + err.message);
@@ -141,6 +144,17 @@ btnFacebookLogin.addEventListener("click", async () => {
     log("Redirecting to Facebook...");
   } catch (err) {
     log("Facebook login error: " + err.message);
+  }
+});
+
+// ★ 追加: Cognito Hosted UI を開く
+btnCognitoHostedUI.addEventListener("click", async () => {
+  try {
+    // provider を省略した場合、Cognito Hosted UI (デフォルト画面) が開きます
+    await Auth.federatedSignIn();
+    log("Redirecting to Cognito Hosted UI...");
+  } catch (err) {
+    log("Hosted UI error: " + err.message);
   }
 });
 
