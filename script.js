@@ -43,6 +43,12 @@ const btnUpdatePhone = document.getElementById("btnUpdatePhone");
 const btnVerifyPhone = document.getElementById("btnVerifyPhone");
 const btnResendPhone = document.getElementById("btnResendPhoneCode");
 
+const forgotEmail = document.getElementById("forgotEmail");
+const resetCode = document.getElementById("resetCode");
+const newPassword = document.getElementById("newPassword");
+const btnForgotPassword = document.getElementById("btnForgotPassword");
+const btnResetPassword = document.getElementById("btnResetPassword");
+
 const btnCheckUser = document.getElementById("btnCheckUser");
 const btnSignOut = document.getElementById("btnSignOut");
 
@@ -217,5 +223,40 @@ btnSignOut.addEventListener("click", async () => {
     log("SignOut success");
   } catch (err) {
     log("SignOut error: " + err.message);
+  }
+});
+
+// Forget Password
+btnForgotPassword.addEventListener("click", async () => {
+  const email = forgotEmail.value.trim();
+  if (!email) {
+    log("Email is required");
+    return;
+  }
+  try {
+    await Auth.forgotPassword(email);
+    log("Reset code sent to " + email);
+  } catch (err) {
+    log("Send reset code error: " + err.message);
+  }
+});
+
+btnResetPassword.addEventListener("click", async () => {
+  const email = forgotEmail.value.trim();
+  const code = resetCode.value.trim();
+  const password = newPassword.value.trim();
+
+  if (!email || !code || !password) {
+    log("Email, code and new password are required");
+    return;
+  }
+
+  try {
+    await Auth.forgotPasswordSubmit(email, code, password);
+    log(
+      "Password reset successful. You can now sign in with the new password."
+    );
+  } catch (err) {
+    log("Reset password error: " + err.message);
   }
 });
