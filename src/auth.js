@@ -13,7 +13,7 @@ import {
     resetPassword,
     confirmResetPassword,
     rememberDevice,
-    forgetDevice,
+    updateMFAPreference,
     signOut,
     fetchDevices,
     signInWithRedirect,
@@ -49,7 +49,6 @@ export async function doSignUp(email, password, phone) {
                 userAttributes,
             },
         });
-
         log("SignUp success: " + JSON.stringify(result, null, 2));
         return { success: true, data: result };
     } catch (err) {
@@ -163,9 +162,6 @@ export async function doUpdatePhone(phoneNumber) {
 
         log("Phone updated. Verification code sent to " + phoneNumber);
 
-        await Auth.setPreferredMFA(currentUser, { sms: true, totp: false });
-        log("Preferred MFA set to SMS");
-
         return { success: true };
     } catch (err) {
         log("Update phone error: " + err.message);
@@ -181,6 +177,13 @@ export async function doVerifyPhone(code) {
         });
 
         log("Phone verify success!");
+
+        await updateMFAPreference({ sms: "PREFERRED" });
+        log("Preferred MFA set to SMS");
+
+        await rememberDevice();
+        log("succeeded to remember device");
+
         return { success: true };
     } catch (err) {
         log("Phone verify error: " + err.message);
