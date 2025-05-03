@@ -1,7 +1,7 @@
 // aws-exports.js
 // ここにCognitoの設定を入れる。User Pool ID, App Client ID, Hosted UI Domainなど
 
-window._awsConfig = {
+const awsConfig = {
     aws_project_region: "ap-northeast-1",
     aws_cognito_region: "ap-northeast-1",
     aws_user_pools_id: "ap-northeast-1_fp1oDJZNP",
@@ -27,3 +27,5 @@ window._awsConfig = {
     // Facebookログインを使う場合
     aws_social_providers: ["FACEBOOK"],
 };
+
+export default awsConfig;
