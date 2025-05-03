@@ -124,6 +124,21 @@ btnSignIn.addEventListener("click", async() => {
             log("SignIn error: " + err.message);
         }
     }
+
+    try {
+        const deviceConfig = await Auth.getDeviceConfig();
+        log("Current device config: " + JSON.stringify(deviceConfig));
+
+        // デバイスが記憶されていない場合は明示的に記憶
+        if (!deviceConfig || !deviceConfig.isRemembered) {
+            await Auth.rememberDevice();
+            log("Device explicitly remembered");
+        }
+    } catch (err) {
+        log("Error checking device config: " + err.message);
+        // エラーが発生した場合も念のためデバイスを記憶する
+        await Auth.rememberDevice();
+    }
 });
 
 btnConfirmMfa.addEventListener("click", async() => {
