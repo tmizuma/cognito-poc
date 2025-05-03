@@ -103,14 +103,6 @@ export async function doSignIn(email, password) {
                 data: signInResult,
             };
         } else if (signInResult.isSignedIn) {
-            // デバイスを記憶して、以降信頼済み端末として扱う
-            try {
-                await rememberDevice();
-                log("Device explicitly remembered");
-            } catch (deviceErr) {
-                log("Device tracking setup error: " + deviceErr.message);
-            }
-
             return {
                 success: true,
                 requiresMFA: false,
@@ -134,27 +126,18 @@ export async function doSignIn(email, password) {
     }
 }
 
-export async function doConfirmMFA(challengeResponse) {
+export async function doConfirmMFA(code) {
+    const result = await confirmSignIn({ challengeResponse: code });
+    log("MFA confirmed");
+
     try {
-        const confirmResult = await confirmSignIn({
-            challengeResponse,
-        });
-
-        log("MFA confirm success: " + JSON.stringify(confirmResult));
-
-        // SMS 認証成功後に新端末を記憶
-        try {
-            await rememberDevice();
-            log("Device explicitly remembered after MFA");
-        } catch (deviceErr) {
-            log("Device tracking setup error after MFA: " + deviceErr.message);
-        }
-
-        return { success: true, data: confirmResult };
-    } catch (err) {
-        log("ConfirmMFA error: " + err.message);
-        return { success: false, error: err.message };
+        await rememberDevice();
+        log("Device remembered after MFA");
+    } catch (e) {
+        log("rememberDevice failed: " + e.message);
     }
+
+    return { success: true, data: result };
 }
 
 export async function doFederatedSignIn(provider = null) {
@@ -179,6 +162,10 @@ export async function doUpdatePhone(phoneNumber) {
         });
 
         log("Phone updated. Verification code sent to " + phoneNumber);
+
+        await Auth.setPreferredMFA(currentUser, { sms: true, totp: false });
+        log("Preferred MFA set to SMS");
+
         return { success: true };
     } catch (err) {
         log("Update phone error: " + err.message);
