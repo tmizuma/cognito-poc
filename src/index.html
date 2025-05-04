@@ -16,10 +16,7 @@
             <label>Email: <input id="signupEmail" type="email" /></label><br />
             <label>Password: <input id="signupPassword" type="password" /></label
         ><br />
-        <label
-          >Phone(+81... optional if not mandatory):
-          <input id="signupPhone" type="text" /> </label
-        ><br />
+
         <button id="btnSignUp">Sign Up</button>
       </div>
     </section>
@@ -56,6 +53,21 @@
         <button id="btnFacebookLogin">Login with Facebook</button>
     </section>
 
+    <!-- ===== Update/Verify Email ===== -->
+    <section style="border: 1px solid #ccc; margin-bottom: 10px; padding: 10px">
+        <h2>Update Email + Verify</h2>
+        <div>
+            <label>New Email: <input id="newEmail" type="email" /></label><br />
+            <button id="btnUpdateEmail">Update Email & Send Code</button>
+        </div>
+        <div style="margin-top: 10px">
+            <label>Verification Code: <input id="emailVerificationCode" type="text"
+        /></label>
+            <button id="btnVerifyEmail">Verify Email</button>
+            <button id="btnResendEmailVerificationCode">Resend Email Code</button>
+        </div>
+    </section>
+
     <!-- ===== Update/Verify Phone ===== -->
     <section style="border: 1px solid #ccc; margin-bottom: 10px; padding: 10px">
         <h2>Attach/Update Phone + Verify (SMS)</h2>
@@ -76,11 +88,6 @@
         <h2>Check Current User / Sign Out</h2>
         <button id="btnCheckUser">Check Current User</button>
         <button id="btnSignOut">Sign Out</button>
-    </section>
-
-    <section style="border: 1px solid #ccc; margin-bottom: 10px; padding: 10px">
-        <h2>Cognito Hosted UI</h2>
-        <button id="btnCognitoHostedUI">Open Cognito Hosted UI</button>
     </section>
 
     <!-- ===== Forget Password ===== -->

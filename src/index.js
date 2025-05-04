@@ -86,11 +86,39 @@ document.addEventListener("DOMContentLoaded", () => {
             await Auth.doFederatedSignIn("Facebook");
         });
 
-    // Cognito Hosted UI
+    // Update Email
     document
-        .getElementById("btnCognitoHostedUI")
+        .getElementById("btnUpdateEmail")
         .addEventListener("click", async() => {
-            await Auth.doFederatedSignIn();
+            const email = document.getElementById("newEmail").value.trim();
+            if (!email) {
+                log("Email is empty.");
+                return;
+            }
+
+            await Auth.doUpdateEmail(email);
+        });
+
+    // Verify Email
+    document
+        .getElementById("btnVerifyEmail")
+        .addEventListener("click", async() => {
+            const code = document
+                .getElementById("emailVerificationCode")
+                .value.trim();
+            if (!code) {
+                log("No email verification code entered.");
+                return;
+            }
+
+            await Auth.doVerifyEmail(code);
+        });
+
+    // Resend Email Verification Code
+    document
+        .getElementById("btnResendEmailVerificationCode")
+        .addEventListener("click", async() => {
+            await Auth.doResendEmailVerificationCode();
         });
 
     // Update Phone
@@ -145,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Sign Out
     document.getElementById("btnSignOut").addEventListener("click", async() => {
         await Auth.doSignOut();
+        log("Logged out");
     });
 
     // Forgot Password

@@ -4,11 +4,11 @@ import {
     signUp,
     confirmSignUp,
     resendSignUpCode,
-    signIn,
     confirmSignIn,
     fetchAuthSession,
     getCurrentUser,
     updateUserAttributes,
+    signIn,
     confirmUserAttribute,
     resetPassword,
     confirmResetPassword,
@@ -86,10 +86,11 @@ export async function doResendSignUpCode(email) {
     }
 }
 
-export async function doSignIn(email, password) {
+export async function doSignIn(username, password) {
     try {
+        console.log(username, password);
         const signInResult = await signIn({
-            username: email,
+            username,
             password,
         });
 
@@ -152,6 +153,52 @@ export async function doFederatedSignIn(provider = null) {
     }
 }
 
+export async function doUpdateEmail(email) {
+    try {
+        await updateUserAttributes({
+            userAttributes: {
+                email: email,
+            },
+        });
+
+        log("Email updated. Verification code sent to " + email);
+
+        return { success: true };
+    } catch (err) {
+        log("Update email error: " + err.message);
+        return { success: false, error: err.message };
+    }
+}
+
+export async function doVerifyEmail(code) {
+    try {
+        await confirmUserAttribute({
+            userAttributeKey: "email",
+            confirmationCode: code,
+        });
+
+        log("Email verify success!");
+        return { success: true };
+    } catch (err) {
+        log("Email verify error: " + err.message);
+        return { success: false, error: err.message };
+    }
+}
+
+export async function doResendEmailVerificationCode() {
+    try {
+        await confirmUserAttribute({
+            userAttributeKey: "email",
+        });
+
+        log("Resend email verification code success");
+        return { success: true };
+    } catch (err) {
+        log("Resend email verification code error: " + err.message);
+        return { success: false, error: err.message };
+    }
+}
+
 export async function doUpdatePhone(phoneNumber) {
     try {
         await updateUserAttributes({
@@ -180,9 +227,6 @@ export async function doVerifyPhone(code) {
 
         await updateMFAPreference({ sms: "PREFERRED" });
         log("Preferred MFA set to SMS");
-
-        await rememberDevice();
-        log("succeeded to remember device");
 
         return { success: true };
     } catch (err) {
