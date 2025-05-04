@@ -3,208 +3,207 @@ import * as Auth from "./auth";
 
 // DOMの読み込み完了後に実行
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM loaded, setting up event listeners");
+  console.log("DOM loaded, setting up event listeners");
 
-    // ログ出力先の設定
-    const logsElem = document.getElementById("logs");
+  // ログ出力先の設定
+  const logsElem = document.getElementById("logs");
 
-    function log(msg) {
-        console.log(msg);
-        logsElem.textContent += msg + "\n";
-        logsElem.scrollTop = logsElem.scrollHeight;
+  function log(msg) {
+    console.log(msg);
+    logsElem.textContent += msg + "\n";
+    logsElem.scrollTop = logsElem.scrollHeight;
+  }
+
+  // ログコールバックを設定
+  Auth.setLogCallback(log);
+
+  // MFA用に保持するチャレンジユーザ
+  let currentChallengeUser = null;
+
+  log("Application initialized successfully");
+
+  // 各ボタンのイベントリスナーを設定
+
+  // SignUp
+  document.getElementById("btnSignUp").addEventListener("click", async () => {
+    const email = document.getElementById("signupEmail").value.trim();
+    const pass = document.getElementById("signupPassword").value.trim();
+
+    await Auth.doSignUp(email, pass, undefined);
+  });
+
+  // Confirm Email
+  document
+    .getElementById("btnConfirmEmail")
+    .addEventListener("click", async () => {
+      const email = document.getElementById("confirmEmail").value.trim();
+      const code = document.getElementById("confirmCode").value.trim();
+
+      await Auth.doConfirmSignUp(email, code);
+    });
+
+  // Resend Email Code
+  document
+    .getElementById("btnResendEmailCode")
+    .addEventListener("click", async () => {
+      const email = document.getElementById("confirmEmail").value.trim();
+      await Auth.doResendSignUpCode(email);
+    });
+
+  // SignIn
+  document.getElementById("btnSignIn").addEventListener("click", async () => {
+    const email = document.getElementById("signinEmail").value.trim();
+    const pass = document.getElementById("signinPassword").value.trim();
+
+    const result = await Auth.doSignIn(email, pass);
+    if (result.success && result.requiresMFA) {
+      currentChallengeUser = result.data;
     }
+  });
 
-    // ログコールバックを設定
-    Auth.setLogCallback(log);
+  // Confirm MFA
+  document
+    .getElementById("btnConfirmMfa")
+    .addEventListener("click", async () => {
+      if (!currentChallengeUser) {
+        log("No challenge user. SignIn with SMS_MFA first.");
+        return;
+      }
 
-    // MFA用に保持するチャレンジユーザ
-    let currentChallengeUser = null;
+      const code = document.getElementById("mfaCode").value.trim();
+      const result = await Auth.doConfirmMFA(code);
 
-    log("Application initialized successfully");
-
-    // 各ボタンのイベントリスナーを設定
-
-    // SignUp
-    document.getElementById("btnSignUp").addEventListener("click", async() => {
-        const email = document.getElementById("signupEmail").value.trim();
-        const pass = document.getElementById("signupPassword").value.trim();
-        const phone = document.getElementById("signupPhone").value.trim();
-
-        await Auth.doSignUp(email, pass, phone);
+      if (result.success) {
+        currentChallengeUser = null;
+      }
     });
 
-    // Confirm Email
-    document
-        .getElementById("btnConfirmEmail")
-        .addEventListener("click", async() => {
-            const email = document.getElementById("confirmEmail").value.trim();
-            const code = document.getElementById("confirmCode").value.trim();
+  // Facebook Login
+  document
+    .getElementById("btnFacebookLogin")
+    .addEventListener("click", async () => {
+      await Auth.doFederatedSignIn("Facebook");
+    });
 
-            await Auth.doConfirmSignUp(email, code);
-        });
+  // Update Email
+  document
+    .getElementById("btnUpdateEmail")
+    .addEventListener("click", async () => {
+      const email = document.getElementById("newEmail").value.trim();
+      if (!email) {
+        log("Email is empty.");
+        return;
+      }
 
-    // Resend Email Code
-    document
-        .getElementById("btnResendEmailCode")
-        .addEventListener("click", async() => {
-            const email = document.getElementById("confirmEmail").value.trim();
-            await Auth.doResendSignUpCode(email);
-        });
+      await Auth.doUpdateEmail(email);
+    });
 
-    // SignIn
-    document.getElementById("btnSignIn").addEventListener("click", async() => {
-        const email = document.getElementById("signinEmail").value.trim();
-        const pass = document.getElementById("signinPassword").value.trim();
+  // Verify Email
+  document
+    .getElementById("btnVerifyEmail")
+    .addEventListener("click", async () => {
+      const code = document
+        .getElementById("emailVerificationCode")
+        .value.trim();
+      if (!code) {
+        log("No email verification code entered.");
+        return;
+      }
 
-        const result = await Auth.doSignIn(email, pass);
-        if (result.success && result.requiresMFA) {
-            currentChallengeUser = result.data;
+      await Auth.doVerifyEmail(code);
+    });
+
+  // Resend Email Verification Code
+  document
+    .getElementById("btnResendEmailVerificationCode")
+    .addEventListener("click", async () => {
+      await Auth.doResendEmailVerificationCode();
+    });
+
+  // Update Phone
+  document
+    .getElementById("btnUpdatePhone")
+    .addEventListener("click", async () => {
+      const phone = document.getElementById("phoneNumber").value.trim();
+      if (!phone) {
+        log("Phone is empty.");
+        return;
+      }
+
+      await Auth.doUpdatePhone(phone);
+    });
+
+  // Verify Phone
+  document
+    .getElementById("btnVerifyPhone")
+    .addEventListener("click", async () => {
+      const code = document.getElementById("phoneCode").value.trim();
+      if (!code) {
+        log("No phone code entered.");
+        return;
+      }
+
+      await Auth.doVerifyPhone(code);
+    });
+
+  // Resend Phone Code
+  document
+    .getElementById("btnResendPhoneCode")
+    .addEventListener("click", async () => {
+      await Auth.doResendPhoneCode();
+    });
+
+  // Check Current User
+  document
+    .getElementById("btnCheckUser")
+    .addEventListener("click", async () => {
+      const result = await Auth.doCheckCurrentUser();
+
+      if (result.success) {
+        log("CurrentUser: " + JSON.stringify(result.data.user, null, 2));
+        log("Current session: " + JSON.stringify(result.data.session, null, 2));
+
+        if (result.data.devices) {
+          log("User devices: " + JSON.stringify(result.data.devices, null, 2));
         }
+      }
     });
 
-    // Confirm MFA
-    document
-        .getElementById("btnConfirmMfa")
-        .addEventListener("click", async() => {
-            if (!currentChallengeUser) {
-                log("No challenge user. SignIn with SMS_MFA first.");
-                return;
-            }
+  // Sign Out
+  document.getElementById("btnSignOut").addEventListener("click", async () => {
+    await Auth.doSignOut();
+    log("Logged out");
+  });
 
-            const code = document.getElementById("mfaCode").value.trim();
-            const result = await Auth.doConfirmMFA(code);
+  // Forgot Password
+  document
+    .getElementById("btnForgotPassword")
+    .addEventListener("click", async () => {
+      const email = document.getElementById("forgotEmail").value.trim();
+      if (!email) {
+        log("Email is required");
+        return;
+      }
 
-            if (result.success) {
-                currentChallengeUser = null;
-            }
-        });
-
-    // Facebook Login
-    document
-        .getElementById("btnFacebookLogin")
-        .addEventListener("click", async() => {
-            await Auth.doFederatedSignIn("Facebook");
-        });
-
-    // Update Email
-    document
-        .getElementById("btnUpdateEmail")
-        .addEventListener("click", async() => {
-            const email = document.getElementById("newEmail").value.trim();
-            if (!email) {
-                log("Email is empty.");
-                return;
-            }
-
-            await Auth.doUpdateEmail(email);
-        });
-
-    // Verify Email
-    document
-        .getElementById("btnVerifyEmail")
-        .addEventListener("click", async() => {
-            const code = document
-                .getElementById("emailVerificationCode")
-                .value.trim();
-            if (!code) {
-                log("No email verification code entered.");
-                return;
-            }
-
-            await Auth.doVerifyEmail(code);
-        });
-
-    // Resend Email Verification Code
-    document
-        .getElementById("btnResendEmailVerificationCode")
-        .addEventListener("click", async() => {
-            await Auth.doResendEmailVerificationCode();
-        });
-
-    // Update Phone
-    document
-        .getElementById("btnUpdatePhone")
-        .addEventListener("click", async() => {
-            const phone = document.getElementById("phoneNumber").value.trim();
-            if (!phone) {
-                log("Phone is empty.");
-                return;
-            }
-
-            await Auth.doUpdatePhone(phone);
-        });
-
-    // Verify Phone
-    document
-        .getElementById("btnVerifyPhone")
-        .addEventListener("click", async() => {
-            const code = document.getElementById("phoneCode").value.trim();
-            if (!code) {
-                log("No phone code entered.");
-                return;
-            }
-
-            await Auth.doVerifyPhone(code);
-        });
-
-    // Resend Phone Code
-    document
-        .getElementById("btnResendPhoneCode")
-        .addEventListener("click", async() => {
-            await Auth.doResendPhoneCode();
-        });
-
-    // Check Current User
-    document
-        .getElementById("btnCheckUser")
-        .addEventListener("click", async() => {
-            const result = await Auth.doCheckCurrentUser();
-
-            if (result.success) {
-                log("CurrentUser: " + JSON.stringify(result.data.user, null, 2));
-                log("Current session: " + JSON.stringify(result.data.session, null, 2));
-
-                if (result.data.devices) {
-                    log("User devices: " + JSON.stringify(result.data.devices, null, 2));
-                }
-            }
-        });
-
-    // Sign Out
-    document.getElementById("btnSignOut").addEventListener("click", async() => {
-        await Auth.doSignOut();
-        log("Logged out");
+      await Auth.doForgotPassword(email);
     });
 
-    // Forgot Password
-    document
-        .getElementById("btnForgotPassword")
-        .addEventListener("click", async() => {
-            const email = document.getElementById("forgotEmail").value.trim();
-            if (!email) {
-                log("Email is required");
-                return;
-            }
+  // Reset Password
+  document
+    .getElementById("btnResetPassword")
+    .addEventListener("click", async () => {
+      const email = document.getElementById("forgotEmail").value.trim();
+      const code = document.getElementById("resetCode").value.trim();
+      const password = document.getElementById("newPassword").value.trim();
 
-            await Auth.doForgotPassword(email);
-        });
+      if (!email || !code || !password) {
+        log("Email, code and new password are required");
+        return;
+      }
 
-    // Reset Password
-    document
-        .getElementById("btnResetPassword")
-        .addEventListener("click", async() => {
-            const email = document.getElementById("forgotEmail").value.trim();
-            const code = document.getElementById("resetCode").value.trim();
-            const password = document.getElementById("newPassword").value.trim();
+      await Auth.doResetPassword(email, code, password);
+    });
 
-            if (!email || !code || !password) {
-                log("Email, code and new password are required");
-                return;
-            }
-
-            await Auth.doResetPassword(email, code, password);
-        });
-
-    // デバッグ情報
-    log("All event listeners set up successfully");
+  // デバッグ情報
+  log("All event listeners set up successfully");
 });
