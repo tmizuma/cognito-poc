@@ -169,6 +169,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+  // Refresh Token
+  document
+    .getElementById("btnRefreshToken")
+    .addEventListener("click", async () => {
+      const result = await Auth.doRefreshToken();
+      if (result.success) {
+        log("Token refreshed successfully");
+      }
+    });
+
   // Sign Out
   document.getElementById("btnSignOut").addEventListener("click", async () => {
     await Auth.doSignOut();
